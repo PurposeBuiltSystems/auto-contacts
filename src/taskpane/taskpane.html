@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Contacts</title>
+
+  <!-- Office.js -->
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <!-- MSAL Browser (provides createNestablePublicClientApplication for NAA) -->
+  <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/lib/msal-browser.min.js"></script>
+
+  <link rel="stylesheet" href="taskpane.css" />
+</head>
+<body>
+  <header class="app-head">
+    <h1>Auto Contacts</h1>
+    <p class="sub">Find people you email who aren't in your contacts, and add them — with details from their signatures.</p>
+  </header>
+
+  <section class="controls">
+    <button id="scan" class="primary">Scan my sent mail</button>
+    <details id="options" class="options">
+      <summary>Options</summary>
+      <div class="row">
+        <label>Days back
+          <input id="daysBack" type="number" min="1" max="90" value="30" />
+        </label>
+      </div>
+      <label class="check"><input id="skipAutomated" type="checkbox" checked /> Skip no-reply and automated senders</label>
+    </details>
+  </section>
+
+  <section id="status" class="status" hidden></section>
+
+  <section id="results" class="results" hidden>
+    <div class="actions">
+      <button id="selectAll">Select all</button>
+      <button id="addSelected" class="primary">Add selected</button>
+    </div>
+    <div id="people"></div>
+  </section>
+
+  <script src="../graph.js"></script>
+  <script src="../parser.js"></script>
+  <script src="taskpane.js"></script>
+</body>
+</html>

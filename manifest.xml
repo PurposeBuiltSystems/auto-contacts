@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Auto Contacts - Outlook add-in (add-in only / XML manifest).
+
+  Two surfaces on the message-read ribbon:
+    1. "Add to Contacts" (one-click): adds the sender (or, on a sent message,
+       the To recipients) to your contacts, mining their signature for phone /
+       title / company / website.
+    2. "Contact Sweep" (task pane): scans your sent mail for people you email
+       who aren't in Contacts, previews the parsed cards, adds the ones you pick.
+
+  Sign-in uses nested app authentication (MSAL) - no backend. Delegated scopes:
+  Contacts.ReadWrite + Mail.Read (own mailbox only). Files are hosted on GitHub
+  Pages; this manifest points at the hosted program files.
+
+  NOTE: this add-in uses its OWN Entra app registration (see SETUP.md) - not
+  the Reply-All app - so its permission footprint stays independent.
+-->
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
+  xsi:type="MailApp">
+
+  <Id>912f5d1b-bc6b-4509-9d23-7ec30241cc21</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>PurposeBuiltSystems</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Auto Contacts" />
+  <Description DefaultValue="Add the people you email to your contacts - with phone, title, and company pulled from their signatures." />
+  <IconUrl DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-64.png" />
+  <HighResolutionIconUrl DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-128.png" />
+  <SupportUrl DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/support.html" />
+
+  <AppDomains>
+    <AppDomain>https://purposebuiltsystems.github.io</AppDomain>
+    <AppDomain>https://login.microsoftonline.com</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Mailbox" />
+  </Hosts>
+
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.5" />
+    </Sets>
+  </Requirements>
+
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/src/taskpane/taskpane.html" />
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <!-- ReadItem: the add-in only reads the open message's id; mail/contact
+       access happens via Graph (delegated Contacts.ReadWrite + Mail.Read). -->
+  <Permissions>ReadItem</Permissions>
+
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read" />
+  </Rule>
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Requirements>
+      <bt:Sets DefaultMinVersion="1.5">
+        <bt:Set Name="Mailbox" />
+      </bt:Sets>
+    </Requirements>
+
+    <Hosts>
+      <Host xsi:type="MailHost">
+        <DesktopFormFactor>
+          <FunctionFile resid="Commands.Url" />
+
+          <ExtensionPoint xsi:type="MessageReadCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="autoContactsGroup">
+                <Label resid="GroupLabel" />
+                <Control xsi:type="Button" id="addToContactsButton">
+                  <Label resid="AddButtonLabel" />
+                  <Supertip>
+                    <Title resid="AddButtonLabel" />
+                    <Description resid="AddButtonTip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16" />
+                    <bt:Image size="32" resid="Icon.32" />
+                    <bt:Image size="80" resid="Icon.80" />
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>addToContacts</FunctionName>
+                  </Action>
+                </Control>
+                <Control xsi:type="Button" id="contactSweepButton">
+                  <Label resid="SweepButtonLabel" />
+                  <Supertip>
+                    <Title resid="SweepButtonLabel" />
+                    <Description resid="SweepButtonTip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16" />
+                    <bt:Image size="32" resid="Icon.32" />
+                    <bt:Image size="80" resid="Icon.80" />
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="Taskpane.Url" />
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-16.png" />
+        <bt:Image id="Icon.32" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-32.png" />
+        <bt:Image id="Icon.80" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-80.png" />
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Commands.Url" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/src/commands/commands.html" />
+        <bt:Url id="Taskpane.Url" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/src/taskpane/taskpane.html" />
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="GroupLabel" DefaultValue="Auto Contacts" />
+        <bt:String id="AddButtonLabel" DefaultValue="Add to Contacts" />
+        <bt:String id="SweepButtonLabel" DefaultValue="Contact Sweep" />
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="AddButtonTip" DefaultValue="Add this person to your contacts, with phone, title, and company pulled from their email signature." />
+        <bt:String id="SweepButtonTip" DefaultValue="Scan your sent mail for people who aren't in your contacts yet, and add them in bulk." />
+      </bt:LongStrings>
+    </Resources>
+
+    <!-- Outlook mobile (iOS/Android): the one-click button only - the sweep
+         pane is a desktop/web experience. -->
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+      <Requirements>
+        <bt:Sets DefaultMinVersion="1.5">
+          <bt:Set Name="Mailbox" />
+        </bt:Sets>
+      </Requirements>
+
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <DesktopFormFactor>
+            <FunctionFile resid="Commands.Url" />
+
+            <ExtensionPoint xsi:type="MessageReadCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="autoContactsGroup">
+                  <Label resid="GroupLabel" />
+                  <Control xsi:type="Button" id="addToContactsButton">
+                    <Label resid="AddButtonLabel" />
+                    <Supertip>
+                      <Title resid="AddButtonLabel" />
+                      <Description resid="AddButtonTip" />
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="Icon.16" />
+                      <bt:Image size="32" resid="Icon.32" />
+                      <bt:Image size="80" resid="Icon.80" />
+                    </Icon>
+                    <Action xsi:type="ExecuteFunction">
+                      <FunctionName>addToContacts</FunctionName>
+                    </Action>
+                  </Control>
+                  <Control xsi:type="Button" id="contactSweepButton">
+                    <Label resid="SweepButtonLabel" />
+                    <Supertip>
+                      <Title resid="SweepButtonLabel" />
+                      <Description resid="SweepButtonTip" />
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="Icon.16" />
+                      <bt:Image size="32" resid="Icon.32" />
+                      <bt:Image size="80" resid="Icon.80" />
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="Taskpane.Url" />
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+
+          <MobileFormFactor>
+            <FunctionFile resid="Commands.Url" />
+
+            <ExtensionPoint xsi:type="MobileMessageReadCommandSurface">
+              <Group id="mobileAutoContactsGroup">
+                <Label resid="GroupLabel" />
+                <Control xsi:type="MobileButton" id="mobileAddToContactsButton">
+                  <Label resid="AddButtonLabel" />
+                  <Icon xsi:type="bt:MobileIconList">
+                    <bt:Image size="25" scale="1" resid="Icon.25" />
+                    <bt:Image size="25" scale="2" resid="Icon.50" />
+                    <bt:Image size="25" scale="3" resid="Icon.75" />
+                    <bt:Image size="32" scale="1" resid="Icon.32" />
+                    <bt:Image size="32" scale="2" resid="Icon.64" />
+                    <bt:Image size="32" scale="3" resid="Icon.96" />
+                    <bt:Image size="48" scale="1" resid="Icon.48" />
+                    <bt:Image size="48" scale="2" resid="Icon.96" />
+                    <bt:Image size="48" scale="3" resid="Icon.144" />
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>addToContacts</FunctionName>
+                  </Action>
+                </Control>
+              </Group>
+            </ExtensionPoint>
+          </MobileFormFactor>
+        </Host>
+      </Hosts>
+
+      <Resources>
+        <bt:Images>
+          <bt:Image id="Icon.16" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-16.png" />
+          <bt:Image id="Icon.25" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-25.png" />
+          <bt:Image id="Icon.32" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-32.png" />
+          <bt:Image id="Icon.48" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-48.png" />
+          <bt:Image id="Icon.50" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-50.png" />
+          <bt:Image id="Icon.64" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-64.png" />
+          <bt:Image id="Icon.75" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-75.png" />
+          <bt:Image id="Icon.80" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-80.png" />
+          <bt:Image id="Icon.96" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-96.png" />
+          <bt:Image id="Icon.144" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/assets/icon-144.png" />
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="Commands.Url" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/src/commands/commands.html" />
+          <bt:Url id="Taskpane.Url" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/src/taskpane/taskpane.html" />
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="GroupLabel" DefaultValue="Auto Contacts" />
+          <bt:String id="AddButtonLabel" DefaultValue="Add to Contacts" />
+          <bt:String id="SweepButtonLabel" DefaultValue="Contact Sweep" />
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="AddButtonTip" DefaultValue="Add this person to your contacts, with phone, title, and company pulled from their email signature." />
+          <bt:String id="SweepButtonTip" DefaultValue="Scan your sent mail for people who aren't in your contacts yet, and add them in bulk." />
+        </bt:LongStrings>
+      </Resources>
+    </VersionOverrides>
+  </VersionOverrides>
+</OfficeApp>

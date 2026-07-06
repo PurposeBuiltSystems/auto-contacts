@@ -1,0 +1,15 @@
+{
+  "name": "auto-contacts",
+  "version": "1.0.0",
+  "description": "Outlook add-in that adds the people you email to your contacts, with phone/title/company mined from their email signatures.",
+  "private": true,
+  "scripts": {
+    "validate": "office-addin-manifest validate manifest.xml",
+    "test": "node test/parser.test.js"
+  },
+  "author": "Matthew Miller",
+  "license": "MIT",
+  "devDependencies": {
+    "office-addin-manifest": "^2.0.4"
+  }
+}
