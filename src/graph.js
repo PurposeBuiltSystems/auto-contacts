@@ -16,7 +16,7 @@
 (function (root) {
   "use strict";
 
-  var CLIENT_ID = "REPLACE_WITH_ENTRA_CLIENT_ID"; // see SETUP.md — new registration
+  var CLIENT_ID = "1a218911-cb74-4e94-8774-444baf11a9a8"; // "Auto Contacts" Entra app (purposebuilt.systems tenant)
   var GRAPH = "https://graph.microsoft.com/v1.0";
   var SCOPES = ["Contacts.ReadWrite", "Mail.Read"];
 
