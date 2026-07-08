@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Contacts — add the people you email to your Outlook contacts</title>
+  <meta name="description" content="Outlook add-in that adds the people you email to your contacts, with phone, title, and company pulled from their email signatures. No data collection." />
+  <style>
+    body { font-family: -apple-system, Segoe UI, sans-serif; margin: 3rem auto; max-width: 44rem; padding: 0 1rem; color: #242424; line-height: 1.55; }
+    h1 { color: #0f6cbd; margin-bottom: 0.2rem; }
+    h2 { margin-top: 2rem; }
+    .tagline { color: #616161; font-size: 1.1rem; margin-top: 0; }
+    .badge { display: inline-block; background: #eff6fc; color: #0c5aa0; border-radius: 6px; padding: 0.2rem 0.6rem; font-size: 0.85rem; margin: 0.15rem 0.25rem 0.15rem 0; }
+    img.icon { width: 96px; height: 96px; float: right; margin: 0 0 1rem 1rem; }
+    footer { margin-top: 3rem; color: #616161; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <img class="icon" src="assets/icon-128.png" alt="Auto Contacts icon" />
+  <h1>Auto Contacts</h1>
+  <p class="tagline">Add the people you email to your Outlook contacts — automatically filled in from their signatures.</p>
+
+  <p>
+    <span class="badge">One-click add</span>
+    <span class="badge">Bulk sweep</span>
+    <span class="badge">Signature parsing</span>
+    <span class="badge">No data collection</span>
+    <span class="badge">Free</span>
+  </p>
+
+  <h2>Why</h2>
+  <p>Outlook's autocomplete remembers every address you've ever typed — but it
+     never creates an actual contact. Your "contacts" end up living in an
+     unsearchable cache with no phone numbers, no titles, no companies. Auto
+     Contacts fixes that.</p>
+
+  <h2>What it does</h2>
+  <ul>
+    <li><strong>Add to Contacts</strong> — one click on any email adds the sender to
+        your contacts, with phone, job title, company, and website parsed from
+        their signature.</li>
+    <li><strong>Contact Sweep</strong> — scans your sent mail for people you email
+        who aren't in your contacts, previews each card, and adds the ones you
+        pick.</li>
+    <li><strong>Never overwrites</strong> — existing contacts only get blank fields
+        filled in.</li>
+  </ul>
+
+  <h2>Privacy by design</h2>
+  <p>No servers, no accounts, no analytics. Everything runs between your Outlook
+     session and Microsoft Graph, inside the Microsoft 365 boundary. Signature
+     parsing is deterministic pattern-matching in your own client — no AI service
+     ever sees your email. Read the <a href="privacy-policy.html">privacy
+     policy</a>.</p>
+
+  <h2>Get it</h2>
+  <p><em>Coming to Microsoft AppSource.</em> Questions in the meantime:
+     <a href="mailto:Matthew@purposebuilt.systems">Matthew@purposebuilt.systems</a>.</p>
+
+  <footer>
+    <a href="privacy-policy.html">Privacy</a> · <a href="terms.html">Terms</a> ·
+    <a href="support.html">Support</a> · PurposeBuilt Systems LLC
+  </footer>
+</body>
+</html>

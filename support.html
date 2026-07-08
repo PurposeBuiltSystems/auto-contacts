@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support — Auto Contacts</title>
+  <style>
+    body { font-family: -apple-system, Segoe UI, sans-serif; margin: 3rem auto; max-width: 44rem; padding: 0 1rem; color: #242424; line-height: 1.55; }
+    h1 { color: #0f6cbd; }
+    h2 { margin-top: 2rem; }
+    code { background: #f3f2f1; padding: 0.1rem 0.3rem; border-radius: 3px; }
+    .muted { color: #616161; }
+  </style>
+</head>
+<body>
+  <h1>Support</h1>
+  <p class="muted">Add-in: <strong>Auto Contacts</strong></p>
+
+  <h2>What it does</h2>
+  <p>Adds the people you email to your own Outlook contacts — with phone, job
+     title, company, and website pulled automatically from their email
+     signatures. Outlook's autocomplete remembers addresses but never creates
+     real contact cards; Auto Contacts does.</p>
+
+  <h2>How to use it</h2>
+  <ol>
+    <li><strong>Add one person:</strong> open a received email and click
+        <strong>Add to Contacts</strong> on the ribbon. The sender is added to your
+        contacts with details parsed from their signature. (On a message you sent,
+        the recipients are added instead.)</li>
+    <li><strong>Add everyone you've missed:</strong> click
+        <strong>Contact Sweep</strong>, then <strong>Scan my sent mail</strong>. The
+        pane lists people you've emailed recently who aren't in your contacts,
+        with a preview of each parsed card. Tick the ones you want and click
+        <strong>Add selected</strong>.</li>
+    <li>Sign in / consent the first time (Microsoft prompt). The add-in only
+        accesses your own mailbox and contacts.</li>
+  </ol>
+
+  <h2>Good to know</h2>
+  <ul>
+    <li><strong>Existing contacts are safe:</strong> if a person is already in your
+        contacts, the add-in only fills in blank fields — it never overwrites
+        anything you've entered.</li>
+    <li><strong>Signature parsing is best-effort:</strong> a card is created from the
+        person's name and email even when no signature is found; review the details
+        in Outlook People and adjust as needed.</li>
+    <li><strong>Automated senders are skipped</strong> in the sweep (no-reply
+        addresses, newsletters, notification bots) — you can disable this in
+        Options.</li>
+  </ul>
+
+  <h2>Troubleshooting</h2>
+  <ul>
+    <li><strong>Button doesn't appear:</strong> make sure you're on a Microsoft 365 /
+        Exchange Online account viewing a message.</li>
+    <li><strong>A field came out wrong:</strong> signatures vary wildly; edit the
+        contact in Outlook People — the add-in won't overwrite your correction.</li>
+    <li><strong>Sweep finds nobody:</strong> everyone you've emailed in the window is
+        already in your contacts, or your sent folder is empty for that range.</li>
+  </ul>
+
+  <h2>Privacy</h2>
+  <p>Your email and contacts never leave Microsoft 365 — parsing happens in your
+     own Outlook session and we never receive your data. See the
+     <a href="privacy-policy.html">Privacy Policy</a>.</p>
+
+  <h2>Contact</h2>
+  <p>For help or to report an issue, email
+     <a href="mailto:Matthew@purposebuilt.systems">Matthew@purposebuilt.systems</a>.</p>
+</body>
+</html>
