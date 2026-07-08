@@ -22,8 +22,8 @@ async function addToContacts(event) {
 
     var token = await GraphData.getToken();
     var msg = await GraphData.getMessage(token, restId);
-    var my = await GraphData.me(token);
-    var myAddr = (my.mail || my.userPrincipalName || "").toLowerCase();
+    // Own address comes from Office.js — no Graph /me call (no User.Read scope).
+    var myAddr = ((Office.context.mailbox.userProfile || {}).emailAddress || "").toLowerCase();
 
     // Received message → the sender. Sent message → the To recipients.
     var sender = msg.from && msg.from.emailAddress;

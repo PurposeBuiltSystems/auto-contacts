@@ -39,8 +39,8 @@
     try {
       setStatus("work", "Reading your sent mail…");
       var token = await GraphData.getToken();
-      var my = await GraphData.me(token);
-      var myAddr = (my.mail || my.userPrincipalName || "").toLowerCase();
+      // Own address comes from Office.js — no Graph /me call (no User.Read scope).
+      var myAddr = ((Office.context.mailbox.userProfile || {}).emailAddress || "").toLowerCase();
 
       var people = await GraphData.sentRecipients(token, daysBack);
       setStatus("work", "Checking " + people.length + " people against your contacts…");

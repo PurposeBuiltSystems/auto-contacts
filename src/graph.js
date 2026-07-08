@@ -194,11 +194,6 @@
     return people;
   }
 
-  /** The signed-in user's own address (to exclude from sweeps). */
-  async function me(token) {
-    return graph(token, "GET", "/me?$select=mail,userPrincipalName,displayName");
-  }
-
   root.GraphData = {
     getToken: getToken,
     loadContacts: loadContacts,
@@ -208,7 +203,6 @@
     getMessage: getMessage,
     latestMessageFrom: latestMessageFrom,
     sentRecipients: sentRecipients,
-    me: me,
     _config: { clientId: CLIENT_ID },
   };
 })(typeof self !== "undefined" ? self : this);
