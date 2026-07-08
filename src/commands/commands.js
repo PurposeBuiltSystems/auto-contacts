@@ -34,8 +34,13 @@ async function addToContacts(event) {
     } else {
       targets = sender ? [sender] : [];
     }
+    var seenAddr = {};
     targets = targets.filter(function (t) {
-      return t && t.address && t.address.toLowerCase() !== myAddr;
+      if (!t || !t.address) { return false; }
+      var a = t.address.toLowerCase();
+      if (a === myAddr || seenAddr[a]) { return false; } // self + same address twice
+      seenAddr[a] = true;
+      return true;
     });
     if (!targets.length) {
       notify("error", "No one to add from this message.");
