@@ -71,12 +71,6 @@ check("text4 fax skipped", r4.phones.business, null);
 check("text4 mobile", r4.phones.mobile, "+1 515-555-7777");
 check("text4 company", r4.company, "Lee Consulting Group");
 
-if (failures) {
-  console.error("\n" + failures + " parser test(s) FAILED");
-  process.exit(1);
-}
-console.log("All signature parser tests passed.");
-
 // 5. Multiple phone numbers: two business + mobile, duplicate suppressed
 var text5 = [
   "Regards,",
@@ -91,3 +85,9 @@ check("text5 business #1", r5.phones.businessList[0], "515-555-1000");
 check("text5 business #2", r5.phones.businessList[1], "515-555-2000");
 check("text5 mobile", r5.phones.mobile, "515-555-3000");
 check("text5 duplicate suppressed", r5.phones.businessList.length, 2);
+
+if (failures) {
+  console.error("\n" + failures + " parser test(s) FAILED");
+  process.exit(1);
+}
+console.log("All signature parser tests passed.");
