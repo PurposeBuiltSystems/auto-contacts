@@ -103,8 +103,10 @@
       emailAddresses: [{ address: person.email, name: person.name || person.email }],
     };
     if (sig) {
-      if (sig.phones && sig.phones.business) { payload.businessPhones = [sig.phones.business]; }
+      var biz = (sig.phones && (sig.phones.businessList || (sig.phones.business ? [sig.phones.business] : []))) || [];
+      if (biz.length) { payload.businessPhones = biz.slice(0, 2); }
       if (sig.phones && sig.phones.mobile) { payload.mobilePhone = sig.phones.mobile; }
+      if (sig.phones && sig.phones.home) { payload.homePhones = [sig.phones.home]; }
       if (sig.title) { payload.jobTitle = sig.title; }
       if (sig.company) { payload.companyName = sig.company; }
       if (sig.website) { payload.businessHomePage = sig.website; }

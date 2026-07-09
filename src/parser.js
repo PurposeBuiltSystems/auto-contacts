@@ -57,14 +57,18 @@
   var PHONE_RE = /(?:^|[\s:|•])((?:\+?\d{1,3}[\s.-]?)?(?:\(\d{2,4}\)[\s.-]?)?\d{2,4}[\s.-]\d{2,4}[\s.-]?\d{0,4})(?=$|[\s,;|•])/;
   var PHONE_LABELS = {
     mobile: /\b(m|mob|mobile|cell|c)\b[\s.:]/i,
+    home: /\b(h|home)\b[\s.:]/i,
     business: /\b(o|off|office|w|work|d|direct|desk|t|tel|ph|phone|p)\b[\s.:]/i,
     fax: /\b(f|fax)\b[\s.:]/i,
   };
 
   function digitCount(s) { return (s.match(/\d/g) || []).length; }
+  function digitsOf(s) { return (s.match(/\d/g) || []).join(""); }
 
+  // Outlook contact cards hold two business phones plus mobile and home.
   function findPhones(lines) {
-    var out = { mobile: null, business: null };
+    var out = { mobile: null, home: null, businessList: [] };
+    var seen = {}; // same number labeled twice shouldn't land twice
     lines.forEach(function (line) {
       // A line can hold several labeled numbers ("O: 515-555-1234 | C: 515-555-9876").
       var segments = line.split(/[|•·]+/);
@@ -76,15 +80,19 @@
         // Years/zips masquerade as phones; require a separator or "+".
         if (!/[\s().+-]/.test(num)) { return; }
         if (PHONE_LABELS.fax.test(seg)) { return; }
+        var key = digitsOf(num);
+        if (seen[key]) { return; }
+        seen[key] = true;
         if (PHONE_LABELS.mobile.test(seg)) {
           if (!out.mobile) { out.mobile = num; }
-        } else if (PHONE_LABELS.business.test(seg)) {
-          if (!out.business) { out.business = num; }
-        } else if (!out.business) {
-          out.business = num; // unlabeled → assume office line
+        } else if (PHONE_LABELS.home.test(seg)) {
+          if (!out.home) { out.home = num; }
+        } else if (out.businessList.length < 2) {
+          out.businessList.push(num); // labeled office/direct/etc. or unlabeled
         }
       });
     });
+    out.business = out.businessList[0] || null; // back-compat convenience
     return out;
   }
 

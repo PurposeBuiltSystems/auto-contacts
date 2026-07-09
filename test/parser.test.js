@@ -76,3 +76,18 @@ if (failures) {
   process.exit(1);
 }
 console.log("All signature parser tests passed.");
+
+// 5. Multiple phone numbers: two business + mobile, duplicate suppressed
+var text5 = [
+  "Regards,",
+  "Carl Ortiz",
+  "Field Operations Lead",
+  "Ortiz Bridge Services LLC",
+  "Office: 515-555-1000 | Direct: 515-555-2000 | Cell: 515-555-3000",
+  "Tel: 515-555-1000",
+].join("\n");
+var r5 = P.parse(text5, "Carl Ortiz", "carl@ortizbridge.com");
+check("text5 business #1", r5.phones.businessList[0], "515-555-1000");
+check("text5 business #2", r5.phones.businessList[1], "515-555-2000");
+check("text5 mobile", r5.phones.mobile, "515-555-3000");
+check("text5 duplicate suppressed", r5.phones.businessList.length, 2);
