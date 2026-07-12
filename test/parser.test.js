@@ -86,6 +86,21 @@ check("text5 business #2", r5.phones.businessList[1], "515-555-2000");
 check("text5 mobile", r5.phones.mobile, "515-555-3000");
 check("text5 duplicate suppressed", r5.phones.businessList.length, 2);
 
+// 6. Version numbers are not websites (real-world: "https://3.6.7" landed on
+// a contact card from a spec-version line in a signature)
+var text6 = [
+  "Thanks,",
+  "Mark Mockett",
+  "Transportation Specialist",
+  "Volpe Center",
+  "WZDx Spec v3.6.7",
+  "(617) 571-5098",
+].join("\n");
+var r6 = P.parse(text6, "Mark Mockett", "mark.mockett@dot.gov");
+check("text6 version number not a website", r6.website, null);
+check("text6 phone still found", r6.phones.business, "(617) 571-5098");
+check("text6 title", r6.title, "Transportation Specialist");
+
 if (failures) {
   console.error("\n" + failures + " parser test(s) FAILED");
   process.exit(1);

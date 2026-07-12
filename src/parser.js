@@ -96,7 +96,9 @@
     return out;
   }
 
-  var URL_RE = /\b((?:https?:\/\/)?(?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+(?:\/[^\s<>"']*)?)/i;
+  // Final label must be an alphabetic TLD - otherwise version numbers in
+  // signatures ("v3.6.7", "Spec 2.4.0") parse as websites.
+  var URL_RE = /\b((?:https?:\/\/)?(?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.[a-z]{2,}(?:\/[^\s<>"']*)?)/i;
 
   function findUrls(lines, senderDomain) {
     var out = { website: null, linkedin: null };
