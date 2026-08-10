@@ -11,13 +11,19 @@
   <!-- MSAL Browser (provides createNestablePublicClientApplication for NAA) -->
   <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/lib/msal-browser.min.js"></script>
 
-  <link rel="stylesheet" href="taskpane.css?v=6" />
+  <link rel="stylesheet" href="taskpane.css?v=7" />
 </head>
 <body>
   <header class="app-head">
     <h1>Auto Contacts</h1>
     <p class="sub">Find people you email who aren't in your contacts, and add them — with details from their signatures.</p>
   </header>
+  <!-- Certification 1100.5.7.1: a visible way out wherever there is a way in. -->
+  <div id="authRow" class="auth-row">
+    <span id="authWho">Not signed in</span>
+    <button id="signIn" class="linkish" type="button" hidden>Sign in</button>
+    <button id="signOut" class="linkish" type="button" hidden>Sign out</button>
+  </div>
 
   <section class="controls">
     <button id="scan" class="primary">Scan my sent mail</button>
@@ -42,8 +48,8 @@
     <div id="people"></div>
   </section>
 
-  <script src="../graph.js?v=6"></script>
-  <script src="../parser.js?v=6"></script>
-  <script src="taskpane.js?v=6"></script>
+  <script src="../graph.js?v=7"></script>
+  <script src="../parser.js?v=7"></script>
+  <script src="taskpane.js?v=7"></script>
 </body>
 </html>
