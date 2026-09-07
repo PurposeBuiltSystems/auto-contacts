@@ -212,8 +212,8 @@
                     <bt:Image size="48" scale="2" resid="Icon.96" />
                     <bt:Image size="48" scale="3" resid="Icon.144" />
                   </Icon>
-                  <Action xsi:type="ExecuteFunction">
-                    <FunctionName>addToContacts</FunctionName>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="Mobile.Url" />
                   </Action>
                 </Control>
               </Group>
@@ -238,6 +238,7 @@
         <bt:Urls>
           <bt:Url id="Commands.Url" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/src/commands/commands.html" />
           <bt:Url id="Taskpane.Url" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/src/taskpane/taskpane.html" />
+          <bt:Url id="Mobile.Url" DefaultValue="https://purposebuiltsystems.github.io/auto-contacts/src/mobile/mobile.html" />
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="GroupLabel" DefaultValue="Auto Contacts" />

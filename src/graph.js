@@ -135,19 +135,68 @@
     ]);
   }
 
+  /**
+   * "mobile" on a phone or tablet, otherwise "desktop".
+   *
+   * The two need different advice and different patience, and until now the
+   * add-in assumed everyone was on a Mac.
+   */
+  function platform() {
+    try {
+      var T = Office.PlatformType || {};
+      var p = Office.context.platform;
+      if (p && (p === T.iOS || p === T.Android)) { return "mobile"; }
+      if (p) { return "desktop"; }
+    } catch (e) { /* fall through to the host name */ }
+    try {
+      var h = (Office.context.mailbox.diagnostics || {}).hostName || "";
+      return /ios|android/i.test(h) ? "mobile" : "desktop";
+    } catch (e2) { return "desktop"; }
+  }
+
+  /**
+   * What to tell the user when sign-in does not complete.
+   *
+   * On a phone there is no task pane, no second window, and no Mission
+   * Control, so the old text ("a sign-in window may have opened behind
+   * Outlook", "fully quit Outlook (Cmd+Q)") was advice the reader could not
+   * act on. Worse, it arrived after a 120-second wait during which Outlook
+   * showed its own "Your request is being worked on." bar and the add-in
+   * looked hung.
+   *
+   * On mobile the interactive fallback is the wrong tool anyway. Under nested
+   * app authentication the host brokers the token, and the reliable fix for a
+   * phone is to consent once on a desktop - after which the silent path
+   * succeeds here.
+   */
+  function signInHelp(stage) {
+    var mobile = platform() === "mobile";
+    if (stage === "start") {
+      return mobile
+        ? "Sign-in didn't start. Close Outlook completely, reopen it, and try again."
+        : "Sign-in didn't start. Fully quit Outlook (Cmd+Q) and reopen, then try again.";
+    }
+    return mobile
+      ? "Couldn't sign in on this device. Open Auto Contacts once in Outlook on your " +
+        "computer and approve the permissions there — after that this will work on your phone."
+      : "Sign-in didn't finish. A Microsoft sign-in window may have opened behind Outlook — " +
+        "check for it (or Mission Control), finish signing in, and click again. If no window " +
+        "appeared at all, fully quit Outlook (Cmd+Q), reopen, and retry.";
+  }
+
   async function getToken() {
-    var pca = await withTimeout(getPca(), 20000,
-      "Sign-in didn't start. Fully quit Outlook (Cmd+Q) and reopen, then try again.");
+    var pca = await withTimeout(getPca(), 20000, signInHelp("start"));
     try {
       // Signed out means signed out: skip silent so the user must re-authenticate.
       if (signedOut) { throw new Error("signed out of the add-in"); }
       return (await withTimeout(pca.acquireTokenSilent({ scopes: SCOPES }), 20000, "silent timeout")).accessToken;
     } catch (e) {
+      // 120s is a reasonable wait for a popup someone is typing into. On a
+      // phone no popup is coming, so waiting that long only holds the host's
+      // progress bar open. Fail fast enough to say something useful.
+      var wait = platform() === "mobile" ? 45000 : 120000;
       var interactive = await withTimeout(
-        pca.acquireTokenPopup({ scopes: SCOPES }), 120000,
-        "Sign-in didn't finish. A Microsoft sign-in window may have opened behind Outlook — " +
-        "check for it (or Mission Control), finish signing in, and click again. If no window " +
-        "appeared at all, fully quit Outlook (Cmd+Q), reopen, and retry.");
+        pca.acquireTokenPopup({ scopes: SCOPES }), wait, signInHelp("finish"));
       setSignedOut(false);   // a real interactive sign-in ends the signed-out state
       return interactive.accessToken;
     }
@@ -309,6 +358,8 @@
     currentAccount: currentAccount,
     isSignedOut: isSignedOut,
     getToken: getToken,
+    _signInHelp: signInHelp,   // exported for tests only
+    _platform: platform,
     loadContacts: loadContacts,
     toContactPayload: toContactPayload,
     createContact: createContact,

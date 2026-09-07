@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!--
+    Pinch zoom is disabled deliberately: this pane is a single short screen and
+    nothing on it benefits from zooming. Recommended in "Code considerations"
+    of the Outlook mobile add-in docs.
+  -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Auto Contacts</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/lib/msal-browser.min.js"></script>
+  <link rel="stylesheet" href="mobile.css?v=1" />
+</head>
+<body>
+
+  <!--
+    Brand bar. Guideline: white logo on the main brand colour, first screen
+    only, never repeated on later screens.
+  -->
+  <header class="brand">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    </span>
+    <span class="brand-name">Auto Contacts</span>
+  </header>
+
+  <main id="screen">
+    <!-- Working: an activity indicator, because the duration is unknown. -->
+    <section id="working" class="screen">
+      <div class="spinner" role="status" aria-live="polite"></div>
+      <p id="workingText" class="working-text">Working…</p>
+    </section>
+
+    <!-- Done -->
+    <section id="done" class="screen" hidden>
+      <h1 id="doneTitle" class="title">Done</h1>
+      <ul id="doneList" class="cells"></ul>
+      <p id="doneNote" class="secondary" hidden></p>
+    </section>
+
+    <!-- Nothing to do, or something went wrong -->
+    <section id="message" class="screen" hidden>
+      <h1 id="messageTitle" class="title">Nothing to add</h1>
+      <p id="messageText" class="secondary"></p>
+    </section>
+  </main>
+
+  <!-- One action, anchored to the bottom. Guideline: stack at most two. -->
+  <footer class="actions">
+    <button id="closeBtn" class="action" type="button">Close</button>
+  </footer>
+
+  <script src="../graph.js?v=1"></script>
+  <script src="../parser.js?v=1"></script>
+  <script src="../addflow.js?v=1"></script>
+  <script src="mobile.js?v=1"></script>
+</body>
+</html>
