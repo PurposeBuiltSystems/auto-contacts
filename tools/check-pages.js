@@ -18,12 +18,32 @@
 const fs = require("fs");
 const path = require("path");
 
-// Supplied by the host or the browser, not by a file in this repo.
+// Supplied by the browser, Node, or the host - not by a file in this repo.
 const AMBIENT = new Set([
-  "Office", "OfficeRuntime", "msal", "window", "document", "console", "fetch",
-  "self", "navigator", "location", "localStorage", "setTimeout", "clearTimeout",
-  "URLSearchParams", "Blob", "FileReader", "TextDecoder", "TextEncoder",
+  "window", "document", "console", "fetch", "self", "globalThis", "navigator",
+  "location", "localStorage", "sessionStorage", "setTimeout", "clearTimeout",
+  "setInterval", "clearInterval", "URL", "URLSearchParams", "Blob", "File",
+  "FileReader", "TextDecoder", "TextEncoder", "DOMParser", "XMLSerializer",
+  "atob", "btoa", "DecompressionStream", "CompressionStream", "crypto",
+  "performance", "Intl", "AbortController", "Headers", "Request", "Response",
+  // Node-only, and always reached through a typeof guard in this codebase.
+  "module", "require", "process", "Buffer", "__dirname",
 ]);
+
+/*
+ * Globals that arrive from a CDN <script>, keyed by a fragment of the URL.
+ *
+ * These were being reported as missing because the scan skipped every
+ * https: script tag outright - so a page loading JSZip from jsdelivr looked
+ * like a page that had forgotten JSZip. Matching on the URL keeps the check
+ * honest without pretending the name is ambient: a page that uses JSZip and
+ * does NOT load it is still an error.
+ */
+const CDN_GLOBALS = [
+  [/office\.js/i, ["Office", "OfficeRuntime", "OfficeExtension"]],
+  [/msal-browser/i, ["msal"]],
+  [/jszip/i, ["JSZip"]],
+];
 
 function walk(dir, out) {
   let entries = [];
@@ -48,8 +68,12 @@ scripts.forEach(function (f) {
   const src = fs.readFileSync(f, "utf8");
   const base = path.basename(f);
 
+  // Modules in this suite publish themselves in several ways: root.X = (an
+  // IIFE given the global), window.X =, self.X =. Matching only root.X made
+  // window.X modules look like they provided nothing, which reported pages
+  // that were in fact correct.
   const gives = [];
-  const re = /\broot\.([A-Za-z_$][\w$]*)\s*=/g;
+  const re = /\b(?:root|window|self|globalThis)\.([A-Za-z_$][\w$]*)\s*=(?!=)/g;
   let m;
   while ((m = re.exec(src))) { if (gives.indexOf(m[1]) < 0) { gives.push(m[1]); } }
   provides.set(base, gives);
@@ -65,12 +89,12 @@ let problems = 0;
 
 pages.forEach(function (page) {
   const html = fs.readFileSync(page, "utf8");
-  const loaded = [];
+  const loaded = [], cdn = [];
   const re = /<script[^>]*\ssrc=["']([^"']+)["']/g;
   let m;
   while ((m = re.exec(html))) {
     const src = m[1];
-    if (/^https?:/i.test(src)) { continue; }          // CDN / Office.js
+    if (/^https?:/i.test(src)) { cdn.push(src); continue; }
     loaded.push(path.basename(src.split("?")[0]));
   }
   if (!loaded.length) { return; }
@@ -78,6 +102,11 @@ pages.forEach(function (page) {
   // Everything those scripts make available on this page.
   const available = new Set();
   loaded.forEach(function (b) { (provides.get(b) || []).forEach(function (g) { available.add(g); }); });
+  cdn.forEach(function (url) {
+    CDN_GLOBALS.forEach(function (pair) {
+      if (pair[0].test(url)) { pair[1].forEach(function (g) { available.add(g); }); }
+    });
+  });
 
   loaded.forEach(function (b) {
     (needs.get(b) || []).forEach(function (want) {
