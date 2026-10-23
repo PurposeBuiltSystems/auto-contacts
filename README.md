@@ -14,6 +14,9 @@ contact cards. Auto Contacts fixes that:
   30 days) for people who aren't in your contacts, previews the parsed card
   for each, and adds the ones you select.
 
+Signature details are best-effort suggestions. Review proposed cards in Contact
+Sweep before adding them; after a one-click add, check the saved contact card.
+
 ## Privacy by design
 
 No publisher server, no data collection. Static files are hosted on GitHub
